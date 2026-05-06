@@ -117,7 +117,14 @@
 
     <!-- Header -->
     <div class="header">
-        <h6>Hello, {{ auth()->user()->name }}</h6>
+        <h6>
+            @php $user = auth()->user(); @endphp
+            @if($user->role == 1)
+                Hello, {{ $user->name }}, these are all the notes and their authors
+            @else
+                Hello, {{ $user->name }}
+            @endif
+        </h6>
 
         <form method="POST" action="{{ route('logout') }}">
             @csrf
@@ -144,7 +151,11 @@
             <div class="note-card">
                 <div class="note-title">{{ $note->title }}</div>
                 <div class="note-content">{{ $note->content }}</div>
-
+                @if(auth()->user()->role == 1)
+                    <small class="text-dark">
+                        <strong>Author:</strong> {{ $note->user->name }}
+                    </small>
+                @endif
                 <form method="POST" action="/notes/{{ $note->id }}" class="mt-2">
                     @csrf
                     @method('DELETE')
